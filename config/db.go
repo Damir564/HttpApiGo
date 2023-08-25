@@ -15,6 +15,10 @@ func Connect() {
 	if err != nil {
 		panic(err)
 	}
+	err = db.SetupJoinTable(&models.User{}, "Segments", &models.UserSegments{})
+	if err != nil {
+		panic(err)
+	}
 	db.AutoMigrate(&models.User{})
 	DB = db
 }

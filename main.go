@@ -6,8 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var db = make(map[string]string)
-
 func setupRouter() *gin.Engine {
 	// Disable Console Color
 	// gin.DisableConsoleColor()
@@ -75,7 +73,9 @@ func main() {
 	// app.Run()
 	r := setupRouter()
 	config.Connect()
-	routes.UserRoute(r)
+	routes.Route(r)
+	// routes.UserRoute(r)
+	// routes.SegmentRoute(r)
 	// Listen and Server in 0.0.0.0:8080
 	r.Run(":8080")
 }
