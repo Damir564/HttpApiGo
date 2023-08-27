@@ -1,9 +1,12 @@
 package main
 
 import (
+	"log"
+
 	"github.com/Damir564/HttpApiGo/config"
 	"github.com/Damir564/HttpApiGo/routes"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func setupRouter() *gin.Engine {
@@ -71,6 +74,9 @@ func setupRouter() *gin.Engine {
 
 func main() {
 	// app.Run()
+	if err := godotenv.Load(); err != nil {
+		log.Fatalf("error loading env variables %s", err.Error())
+	}
 	r := setupRouter()
 	config.Connect()
 	routes.Route(r)
