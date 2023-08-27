@@ -17,6 +17,7 @@ func Route(r *gin.Engine) {
 	r.PUT("/segment/:id", controller.UpdateSegment)
 
 	r.POST("/bind", controller.Bind)
+	r.GET("/binds", controller.GetBinds)
 }
 
 // func SegmentRoute(r *gin.Engine) {
