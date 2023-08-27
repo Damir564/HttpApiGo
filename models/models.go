@@ -7,7 +7,7 @@ import (
 )
 
 type User struct {
-	ID       uint      `gorm:"primarykey"`
+	ID       uint      `json:"user_id" gorm:"primarykey"`
 	Segments []Segment `json:"-" gorm:"many2many:user_segments;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 

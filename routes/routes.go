@@ -13,8 +13,8 @@ func Route(r *gin.Engine) {
 
 	r.GET("/segments", controller.GetSegments)
 	r.POST("/segment", controller.CreateSegment)
-	r.DELETE("/segment/:id", controller.DeleteSegment)
-	r.PUT("/segment/:id", controller.UpdateSegment)
+	r.DELETE("/segment/", controller.DeleteSegment)
+	r.PUT("/segment/", controller.UpdateSegment)
 
 	r.POST("/bind", controller.Bind)
 	r.GET("/binds", controller.GetBinds)
