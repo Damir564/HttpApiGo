@@ -17,6 +17,16 @@ type BindMessage struct {
 	UserId         uint     `json:"user_id"`
 }
 
+// Bind godoc
+// @Summary Bind/Unbind User with Segments
+// @Description (un)binds user with segments using segment slugs and user id
+// @Tags user_segments
+// @Produce json
+// @Param segmentsAdd formData array false "array of segment's slugs that you want to bind"
+// @Param segmentsRemove formData array false "array of segment's slugs that you want to unbind"
+// @Param user_id formData int true "Id of the user you want to (un)bind with segments"
+// @Success 200
+// @Router /bind [post]
 func Bind(c *gin.Context) {
 	//
 	var bindMessage BindMessage

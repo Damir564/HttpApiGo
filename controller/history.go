@@ -43,6 +43,15 @@ type YearMonth struct {
 	// Day   uint `json:"day"`
 }
 
+// GetHistory godoc
+// @Summary Get History
+// @Description Gets records in user_segments for specific month-year. Creates .csv file in the project
+// @Tags user_segments
+// @Produce json
+// @Param year formData int true "year of records"
+// @Param month formData int true "month of records"
+// @Success 200
+// @Router /history [get]
 func GetHistory(c *gin.Context) {
 	var yearMonth YearMonth
 	c.BindJSON(&yearMonth)

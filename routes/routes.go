@@ -3,13 +3,18 @@ package routes
 import (
 	"github.com/Damir564/HttpApiGo/controller"
 	"github.com/gin-gonic/gin"
+
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func Route(r *gin.Engine) {
+	r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	r.GET("/users", controller.GetUsers)
 	r.POST("/user", controller.CreateUser)
 	r.DELETE("/user/:id", controller.DeleteUser)
-	r.PUT("/user/:id", controller.UpdateUser)
+	// r.PUT("/user/:id", controller.UpdateUser)
 
 	r.GET("/segments", controller.GetSegments)
 	r.POST("/segment", controller.CreateSegment)

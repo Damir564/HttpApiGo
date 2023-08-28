@@ -17,6 +17,14 @@ type UserRequest struct {
 	ID uint `json:"user_id"`
 }
 
+// GetBindsForUser godoc
+// @Summary Get all binds for specific user
+// @Description Pass user id and get user's all binded segments
+// @Tags user_segments
+// @Produce json
+// @Param user_id formData int true "Id of the user you want to see segments"
+// @Success 200 {array} models.Segment
+// @Router /binds [get]
 func GetBinds(c *gin.Context) {
 	//var segmentIds []uint
 	var segments []models.Segment

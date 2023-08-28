@@ -1,0 +1,303 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Users and Segments",
+        "title": "HTTP API",
+        "contact": {
+            "name": "Damir Nizamutdinov",
+            "email": "ddamir.nizamutdinov@yandex.ru"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/bind": {
+            "post": {
+                "description": "(un)binds user with segments using segment slugs and user id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user_segments"
+                ],
+                "summary": "Bind/Unbind User with Segments",
+                "parameters": [
+                    {
+                        "type": "array",
+                        "description": "array of segment's slugs that you want to bind",
+                        "name": "segmentsAdd",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "array",
+                        "description": "array of segment's slugs that you want to unbind",
+                        "name": "segmentsRemove",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Id of the user you want to (un)bind with segments",
+                        "name": "user_id",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/binds": {
+            "get": {
+                "description": "Pass user id and get user's all binded segments",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user_segments"
+                ],
+                "summary": "Get all binds for specific user",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Id of the user you want to see segments",
+                        "name": "user_id",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Segment"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/history": {
+            "get": {
+                "description": "Gets records in user_segments for specific month-year. Creates .csv file in the project",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user_segments"
+                ],
+                "summary": "Get History",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "year of records",
+                        "name": "year",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "month of records",
+                        "name": "month",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/segment": {
+            "put": {
+                "description": "Updates segment slug with new slug",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "segments"
+                ],
+                "summary": "Update Segment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "slug of the segment you want to update",
+                        "name": "slug",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "new slug for the segment",
+                        "name": "newSlug",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "description": "Creates segment passing it's slug also has parameter for auto-binding",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "segments"
+                ],
+                "summary": "Create Segment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "slug of the segment you want to create",
+                        "name": "slug",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "percentage of users who will be automatically binded to these segments",
+                        "name": "auto_percentage",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes segment passing it's slug",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "segments"
+                ],
+                "summary": "Delete Segment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "slug of the segment you want to delete",
+                        "name": "slug",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/segments": {
+            "get": {
+                "description": "Returns array of segments in JSON format",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "segments"
+                ],
+                "summary": "Get segments array",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/user": {
+            "post": {
+                "description": "Creates user with autoincrement primary key",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Creates User",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/user/:id": {
+            "delete": {
+                "description": "Deletes user passing it's ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Deletes User",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "user's id you want to delete",
+                        "name": "id",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "description": "Gets all users",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Gets Users",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.Segment": {
+            "type": "object",
+            "properties": {
+                "auto_percentage": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "slug": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

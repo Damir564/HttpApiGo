@@ -14,12 +14,28 @@ type SegmentChange struct {
 	NewSlug string `json:"newSlug"`
 }
 
+// GetSegments godoc
+// @Summary Get segments array
+// @Description Returns array of segments in JSON format
+// @Tags segments
+// @Produce json
+// @Success 200
+// @Router /segments [get]
 func GetSegments(c *gin.Context) {
 	segments := []models.Segment{}
 	config.DB.Find(&segments)
 	c.JSON(http.StatusOK, &segments)
 }
 
+// CreateSegment godoc
+// @Summary Create Segment
+// @Description Creates segment passing it's slug also has parameter for auto-binding
+// @Tags segments
+// @Produce json
+// @Param slug formData string true "slug of the segment you want to create"
+// @Param auto_percentage formData int false "percentage of users who will be automatically binded to these segments"
+// @Success 200
+// @Router /segment [post]
 func CreateSegment(c *gin.Context) {
 	var segment models.Segment
 	// c.BindJSON(&segment)
@@ -40,6 +56,15 @@ func CreateSegment(c *gin.Context) {
 	// c.JSON(http.StatusOK, &segment)
 }
 
+// UpdateSegment godoc
+// @Summary Update Segment
+// @Description Updates segment slug with new slug
+// @Tags segments
+// @Produce json
+// @Param slug formData string true "slug of the segment you want to update"
+// @Param newSlug formData string true "new slug for the segment"
+// @Success 200
+// @Router /segment [put]
 func UpdateSegment(c *gin.Context) {
 	var segmentChange SegmentChange
 	var segment models.Segment
@@ -53,6 +78,14 @@ func UpdateSegment(c *gin.Context) {
 	}
 }
 
+// DeleteSegment godoc
+// @Summary Delete Segment
+// @Description Deletes segment passing it's slug
+// @Tags segments
+// @Produce json
+// @Param slug formData string true "slug of the segment you want to delete"
+// @Success 200
+// @Router /segment [delete]
 func DeleteSegment(c *gin.Context) {
 	var segment models.Segment
 	c.BindJSON(&segment)

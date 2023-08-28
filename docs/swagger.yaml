@@ -1,0 +1,202 @@
+basePath: /
+definitions:
+  models.Segment:
+    properties:
+      auto_percentage:
+        type: integer
+      id:
+        type: integer
+      slug:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: ddamir.nizamutdinov@yandex.ru
+    name: Damir Nizamutdinov
+  description: Users and Segments
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: HTTP API
+  version: "1.0"
+paths:
+  /bind:
+    post:
+      description: (un)binds user with segments using segment slugs and user id
+      parameters:
+      - description: array of segment's slugs that you want to bind
+        in: formData
+        name: segmentsAdd
+        type: array
+      - description: array of segment's slugs that you want to unbind
+        in: formData
+        name: segmentsRemove
+        type: array
+      - description: Id of the user you want to (un)bind with segments
+        in: formData
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Bind/Unbind User with Segments
+      tags:
+      - user_segments
+  /binds:
+    get:
+      description: Pass user id and get user's all binded segments
+      parameters:
+      - description: Id of the user you want to see segments
+        in: formData
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Segment'
+            type: array
+      summary: Get all binds for specific user
+      tags:
+      - user_segments
+  /history:
+    get:
+      description: Gets records in user_segments for specific month-year. Creates
+        .csv file in the project
+      parameters:
+      - description: year of records
+        in: formData
+        name: year
+        required: true
+        type: integer
+      - description: month of records
+        in: formData
+        name: month
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Get History
+      tags:
+      - user_segments
+  /segment:
+    delete:
+      description: Deletes segment passing it's slug
+      parameters:
+      - description: slug of the segment you want to delete
+        in: formData
+        name: slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Delete Segment
+      tags:
+      - segments
+    post:
+      description: Creates segment passing it's slug also has parameter for auto-binding
+      parameters:
+      - description: slug of the segment you want to create
+        in: formData
+        name: slug
+        required: true
+        type: string
+      - description: percentage of users who will be automatically binded to these
+          segments
+        in: formData
+        name: auto_percentage
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Create Segment
+      tags:
+      - segments
+    put:
+      description: Updates segment slug with new slug
+      parameters:
+      - description: slug of the segment you want to update
+        in: formData
+        name: slug
+        required: true
+        type: string
+      - description: new slug for the segment
+        in: formData
+        name: newSlug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Update Segment
+      tags:
+      - segments
+  /segments:
+    get:
+      description: Returns array of segments in JSON format
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Get segments array
+      tags:
+      - segments
+  /user:
+    post:
+      description: Creates user with autoincrement primary key
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Creates User
+      tags:
+      - users
+  /user/:id:
+    delete:
+      description: Deletes user passing it's ID
+      parameters:
+      - description: user's id you want to delete
+        in: formData
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Deletes User
+      tags:
+      - users
+  /users:
+    get:
+      description: Gets all users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Gets Users
+      tags:
+      - users
+swagger: "2.0"
