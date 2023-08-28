@@ -29,16 +29,6 @@ type History struct {
 	Timestamp time.Time
 }
 
-func outputString(c *gin.Context, index int, hist History) {
-	c.String(http.StatusOK, "%-4d|%-6d|%-8d\t|%-20s\t|%-8s\t|%-20s\n",
-		index,
-		hist.UserID,
-		hist.SegmentID,
-		hist.Segment,
-		hist.Operation,
-		hist.Timestamp.Format("02.01.2006 15:04:05"))
-}
-
 type Data struct {
 	UserID      uint           `json:"user_id" gorm:"column:user_id"`
 	SegmentID   uint           `json:"segment_id" gorm:"column:segment_id"`
@@ -91,7 +81,7 @@ func GetHistory(c *gin.Context) {
 			return histories[i].Timestamp.Before(histories[i].Timestamp)
 		})
 		fileName := fmt.Sprintf("%d-%d.csv", yearMonth.Year, yearMonth.Month)
-		filePath := fmt.Sprintf("./reports/%s", fileName)
+		filePath := fmt.Sprintf("./%s", fileName)
 
 		file, err := os.Create(filePath)
 		if err != nil {
@@ -120,15 +110,5 @@ func GetHistory(c *gin.Context) {
 		}
 
 		c.JSON(http.StatusOK, gin.H{"report_url": filePath})
-		// c.String(http.StatusOK, "%-4s|%-6s|%-8s\t|%-20s\t|%-8s\t|%-20s\n",
-		// 	"N",
-		// 	"UserID",
-		// 	"SegmentId",
-		// 	"SegmentSlug",
-		// 	"Operation",
-		// 	"Timestamp")
-		// for i, v := range histories {
-		// 	outputString(c, i, v)
-		// }
 	}
 }
