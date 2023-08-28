@@ -1,6 +1,6 @@
 version: '3.8' 
 services: 
-  postgres: 
+  db: 
     image: postgres 
     ports: 
       - "5432:5432" 
@@ -8,6 +8,20 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
-      #- POSTGRES_HOST_AUTH_METHOD=trust
     volumes: 
       - ./db:/var/lib/postgresql/data
+  web:
+    build: .
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/usr/src/app
+    environment:
+      - DB_HOST=host.docker.internal
+    command: air main.go -b 0.0.0.0
+  
+volumes:
+  postgres-db:
+

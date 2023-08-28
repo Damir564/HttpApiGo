@@ -25,7 +25,7 @@ func getUserSequence(c *gin.Context, percentage uint, segmentSlug string) {
 	for _, v := range users {
 		bindMessage := BindMessage{SegmentsAdd: []string{segmentSlug}, UserId: v.ID}
 		// userSegmentsSlice := bindMessage.Add()
-		userSegmentsSlice = append(userSegmentsSlice, bindMessage.Add()[0])
+		userSegmentsSlice = append(userSegmentsSlice, bindMessage.Add(c)[0])
 	}
 	if len(userSegmentsSlice) != 0 {
 		config.DB.Save(&userSegmentsSlice)
