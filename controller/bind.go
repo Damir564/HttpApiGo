@@ -11,6 +11,12 @@ import (
 	"gorm.io/gorm"
 )
 
+type BindMessage struct {
+	SegmentsAdd    []string `json:"segmentsAdd"`
+	SegmentsRemove []string `json:"segmentsRemove"`
+	UserId         uint     `json:"user_id"`
+}
+
 func Bind(c *gin.Context) {
 	//
 	var bindMessage BindMessage
@@ -19,15 +25,11 @@ func Bind(c *gin.Context) {
 	if len(userSegmentsSlice) != 0 {
 		config.DB.Save(&userSegmentsSlice)
 	}
-	bindMessage.Remove()
+	if len(bindMessage.SegmentsRemove) != 0 {
+		bindMessage.Remove()
+	}
 	// c.JSON(http.StatusOK, &bindMessage)
 	c.JSON(http.StatusOK, &userSegmentsSlice)
-}
-
-type BindMessage struct {
-	SegmentsAdd    []string `json:"segmentsAdd"`
-	SegmentsRemove []string `json:"segmentsRemove"`
-	UserId         uint     `json:"user_id"`
 }
 
 // func GetSegmentIdByName(s string) (segment models.Segment) {
@@ -58,7 +60,7 @@ func (bm *BindMessage) Add() []models.UserSegments {
 				}
 				// panic(err)
 			} else if config.DB.Where("user_id = ? AND segment_id = ?", bm.UserId, segment.ID).First(&userSegments).Error == nil {
-				fmt.Printf(" binding between User \"%d\" and Segment \"%d\" \"%s\"already exist\n", bm.UserId, segment.ID, segment.Slug)
+				fmt.Printf(" binding for User \"%d\" and Segment \"%d\" \"%s\"already exist\n", bm.UserId, segment.ID, segment.Slug)
 			} else {
 				userSegments.UserID = bm.UserId
 				userSegments.SegmentID = segment.ID

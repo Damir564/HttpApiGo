@@ -18,6 +18,8 @@ func Route(r *gin.Engine) {
 
 	r.POST("/bind", controller.Bind)
 	r.GET("/binds", controller.GetBinds)
+
+	r.GET("/history", controller.GetHistory)
 }
 
 // func SegmentRoute(r *gin.Engine) {
