@@ -104,7 +104,7 @@ func GetHistory(c *gin.Context) {
 				history.Timestamp.Format("02.01.2006 15:04:05"),
 			}
 			if err := writer.Write(row); err != nil {
-				c.JSON(http.StatusInternalServerError, err.Error())
+				c.JSON(http.StatusInternalServerError, gin.H{"Error:": err.Error()})
 				return
 			}
 		}

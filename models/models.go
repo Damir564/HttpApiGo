@@ -12,8 +12,9 @@ type User struct {
 }
 
 type Segment struct {
-	ID   uint   `gorm:"primarykey"`
-	Slug string `json:"slug" gorm:"uniqueIndex"`
+	ID             uint   `gorm:"primarykey"`
+	Slug           string `json:"slug" gorm:"uniqueIndex"`
+	AutoPercentage uint   `json:"auto_percentage"`
 }
 
 type UserSegments struct {
