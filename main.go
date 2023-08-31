@@ -16,7 +16,7 @@ func setupRouter() *gin.Engine {
 	return r
 }
 
-// @title HTTP API
+// @title HTTP API GO
 // @version 1.0
 // @description Users and Segments
 
@@ -29,15 +29,12 @@ func setupRouter() *gin.Engine {
 // @host	localhost:8080
 // @BasePath /
 func main() {
-	// app.Run()
+	// os.Setenv("TZ", "Europe/Moscow")
 	if err := godotenv.Load(); err != nil {
 		log.Fatalf("error loading env variables %s", err.Error())
 	}
 	r := setupRouter()
 	config.Connect()
 	routes.Route(r)
-	// routes.UserRoute(r)
-	// routes.SegmentRoute(r)
-	// Listen and Server in 0.0.0.0:8080
 	r.Run(":8080")
 }

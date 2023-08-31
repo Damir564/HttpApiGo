@@ -44,12 +44,16 @@ func CreateSegment(c *gin.Context) {
 		return
 	}
 	var tempSegment models.Segment
-	if err := config.DB.Table("segments").Where("slug = ?", segment.Slug).First(&tempSegment).Error; err == nil {
+	if r := config.DB.Model(&models.Segment{}).Where("slug = ?", segment.Slug).Limit(1).Find(&tempSegment); r.RowsAffected > 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"Message": "Segment with such slug already exists"})
 		return
 	}
 	config.DB.Create(&segment)
 	if segment.AutoPercentage > 0 {
+
+		tmpUserSegments := make([]models.UserSegments, 0)
+		config.DB.Model(&models.UserSegments{}).Find(&tmpUserSegments)
+
 		getUserSequence(c, segment.AutoPercentage, segment.Slug)
 		// c.JSON(http.StatusOK, gin.H{"UsersAmount:": getUserSequence(segment.AutoPercentage)})
 	}
@@ -69,7 +73,7 @@ func UpdateSegment(c *gin.Context) {
 	var segmentChange SegmentChange
 	var segment models.Segment
 	c.BindJSON(&segmentChange)
-	if err := config.DB.Where("slug = ?", segmentChange.Slug).First(&segment).Error; err != nil {
+	if r := config.DB.Model(&models.Segment{}).Where("slug = ?", segmentChange.Slug).Limit(1).Find(&segment); r.RowsAffected == 0 {
 		fmt.Printf("segment with slug \"%s\" mot found\n", segment.Slug)
 	} else {
 		segment.Slug = segmentChange.NewSlug

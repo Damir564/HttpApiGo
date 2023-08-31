@@ -10,32 +10,25 @@ import (
 	"time"
 
 	"github.com/Damir564/HttpApiGo/config"
+	"github.com/Damir564/HttpApiGo/models"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
-type Operation string
+// type History struct {
+// 	UserID    uint
+// 	SegmentID uint
+// 	Segment   string
+// 	Operation Operation
+// 	Timestamp time.Time
+// }
 
-const (
-	Create Operation = "Create"
-	Delete Operation = "Delete"
-)
-
-type History struct {
-	UserID    uint
-	SegmentID uint
-	Segment   string
-	Operation Operation
-	Timestamp time.Time
-}
-
-type Data struct {
-	UserID      uint           `json:"user_id" gorm:"column:user_id"`
-	SegmentID   uint           `json:"segment_id" gorm:"column:segment_id"`
-	SegmentSlug string         `json:"segmentSlug" gorm:"column:slug"`
-	CreatedAt   time.Time      `json:"created_at" gorm:"column:created_at"`
-	DeletedAt   gorm.DeletedAt `json:"deleted_at" gorm:"column:deleted_at"`
-}
+// type Data struct {
+// 	UserID      uint           `json:"user_id" gorm:"column:user_id"`
+// 	SegmentID   uint           `json:"segment_id" gorm:"column:segment_id"`
+// 	SegmentSlug string         `json:"segmentSlug" gorm:"column:slug"`
+// 	CreatedAt   time.Time      `json:"created_at" gorm:"column:created_at"`
+// 	DeletedAt   gorm.DeletedAt `json:"deleted_at" gorm:"column:deleted_at"`
+// }
 
 type YearMonth struct {
 	Year  uint `json:"year"`
@@ -63,29 +56,20 @@ func GetHistory(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "key \"month\" not correct")
 		return
 	}
-	userSegments := make([]Data, 0)
-	config.DB.Table("user_segments").Find(&userSegments)
-	if err := config.DB.Table("user_segments").Unscoped().
-		Select("user_segments.user_id", "user_segments.segment_id", "user_segments.created_at", "user_segments.deleted_at", "segments.slug").
-		Joins("join segments on segments.id = user_segments.segment_id").
-		Where("(EXTRACT('Year' FROM created_at) = ? AND EXTRACT('Month' FROM created_at) = ?) OR (EXTRACT('Year' FROM deleted_at) = ? AND EXTRACT('Month' FROM deleted_at) = ?)",
-			yearMonth.Year,
-			yearMonth.Month,
-			yearMonth.Year,
-			yearMonth.Month).
-		Find(&userSegments).Error; err != nil {
-		c.JSON(http.StatusBadRequest, &userSegments)
+	histories := make([]models.History, 0)
+
+	tmpUserSegments := make([]models.UserSegments, 0)
+	config.DB.Model(&models.UserSegments{}).Find(&tmpUserSegments)
+
+	// config.DB.Model(&models.History{}).Find(&histories)
+	// config.DB.Model(&models.UserSegments{}).Find(&userSegments)
+
+	if r := config.DB.Model(&models.History{}).Where("(EXTRACT('Year' FROM timestamp) = ? AND EXTRACT('Month' FROM timestamp) = ?)",
+		yearMonth.Year,
+		yearMonth.Month).
+		Find(&histories); r.RowsAffected == 0 {
+		c.String(http.StatusOK, "no data in this period")
 	} else {
-		histories := make([]History, 0)
-		for _, v := range userSegments {
-			history := History{v.UserID, v.SegmentID, v.SegmentSlug, Operation(Create), v.CreatedAt.UTC()}
-			histories = append(histories, history)
-			if v.DeletedAt.Valid {
-				history.Operation = Operation(Delete)
-				history.Timestamp = v.DeletedAt.Time.UTC()
-				histories = append(histories, history)
-			}
-		}
 		sort.Slice(histories, func(i, j int) bool {
 			return histories[i].Timestamp.Before(histories[i].Timestamp)
 		})
@@ -103,14 +87,14 @@ func GetHistory(c *gin.Context) {
 		defer writer.Flush()
 		headers := []string{"N", "UserID", "SegmentId", "SegmentSlug", "Operation", "Timestamp"}
 		writer.Write(headers)
-		for i, history := range histories {
+		for _, history := range histories {
 			row := []string{
-				strconv.Itoa(i),
+				strconv.Itoa(int(history.ID)),
 				strconv.FormatUint(uint64(history.UserID), 10),
 				strconv.FormatUint(uint64(history.SegmentID), 10),
-				history.Segment,
-				string(history.Operation),
-				history.Timestamp.Format("02.01.2006 15:04:05"),
+				history.SegmentSlug,
+				history.Operation,
+				history.Timestamp.Format(time.RFC3339),
 			}
 			if err := writer.Write(row); err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"Error:": err.Error()})

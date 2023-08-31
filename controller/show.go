@@ -30,10 +30,16 @@ func GetBinds(c *gin.Context) {
 	var segments []models.Segment
 	var user UserRequest
 	c.BindJSON(&user)
+
+	tmpUserSegments := make([]models.UserSegments, 0)
+	config.DB.Model(&models.UserSegments{}).Find(&tmpUserSegments)
+
 	// userSegments := []models.UserSegments{}
-	if err := config.DB.Table("user_segments").
-		Where("user_id = ? AND deleted_at IS NULL", user.ID).
-		Order("segment_id asc").Joins("join segments on segments.id = user_segments.segment_id").Select("segments.id", "segments.slug").
+	if err := config.DB.Model(&models.UserSegments{}).
+		Where("user_id = ?", user.ID).
+		Order("segment_id asc").Joins("join segments on segments.id = user_segments.segment_id").Select("segments.id",
+		"segments.slug",
+		"segments.auto_percentage").
 		Find(&segments).Error; err != nil {
 		c.JSON(http.StatusBadRequest, &segments)
 	} // } else {
